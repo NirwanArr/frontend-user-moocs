@@ -45,6 +45,13 @@ const Navbar = () => {
       setNavbar(false);
     }
   };
+
+  useEffect(() => {
+    const key = localStorage.getItem("key")
+    if (key) {
+      setActive(key)
+    }
+  })
   window.addEventListener("scroll", changeBackground);
 
   const handleSearchClick = () => {
@@ -90,7 +97,8 @@ const Navbar = () => {
       >
         <div className="flex items-center justify-between px-2 py-4 lg:pt-6 lg:px-10">
           <div>
-            <Link to={"/"}>
+            <Link to={"/"} repl
+            ace>
               <img src={logo} alt="logo" className="w-10 h-10" />
             </Link>
           </div>
@@ -234,7 +242,7 @@ const Navbar = () => {
             {isLoggedIn && (
               <ul className="relative flex items-center gap-6">
                 <span
-                  className={`bg-white duration-500 ${Menus[active].dis} border-2 border-white h-14 w-14 absolute -left-2 top-2 rounded-t-full`}
+                  className={`bg-white duration-500 ${Menus[parseInt(active)].dis} border-2 border-white h-14 w-14 absolute -left-2 top-2 rounded-t-full`}
                 ></span>
                 {Menus.map((menu, i) => (
                   <li key={i}>
@@ -242,16 +250,19 @@ const Navbar = () => {
                       as={Link}
                       to={menu.link}
                       className="flex flex-col items-center"
-                      onClick={() => setActive(i)}
+                      onClick={() => {
+                        setActive(i)
+                        localStorage.setItem("key", i)
+                      }}
                     >
                       <span
-                        className={`z-10 duration-500 text-white hover:text-slate-400 ${i === active && "-mb-12 text-yellow-500"
+                        className={`z-10 duration-500 text-white hover:text-slate-400 ${i === parseInt(active) && "-mb-12 text-yellow-500"
                           }`}
                       >
                         {menu.icon}
                       </span>
                       <p
-                        className={`text-white font-poppins font-medium ${active === i
+                        className={`text-white font-poppins font-medium ${parseInt(active) === i
                           ? "-translate-y-4 duration-700 opacity-100"
                           : "opacity-0 -translate-y-16"
                           }`}

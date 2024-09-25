@@ -1,10 +1,11 @@
 import { Link, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FiEye, FiEyeOff } from "react-icons/fi";
 import { login } from "../../api/fetching";
 import { getEmail } from "../../api/fetching";
 import axios from "axios";
 import background from "../../assets/Analytics.png";
+import { getToken } from "../../api/payload";
 
 const LoginPage = () => {
   const navigate = useNavigate();
@@ -14,6 +15,8 @@ const LoginPage = () => {
   // eslint-disable-next-line no-unused-vars
   const [isLoading, setIsLoading] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
+
+  
 
   const togglePasswordVisibility = () => {
     setShowPassword((prevShowPassword) => !prevShowPassword);
@@ -35,6 +38,13 @@ const LoginPage = () => {
     }
   };
 
+  useEffect(() => {
+    if (getToken()) {
+      console.log(getToken())
+      window.location.href = "/"
+    }
+  })
+
   const handleLogin = async () => {
     if (!email || !password) {
       setAlertMessage("Mohon lengkapi semua kolom.");
@@ -42,7 +52,7 @@ const LoginPage = () => {
     }
     try {
       await login(email, password);
-      navigate("/");
+      window.location.href = "/"
     } catch (err) {
       if (axios.isAxiosError(err)) {
         setAlertMessage(err.response.data.message);

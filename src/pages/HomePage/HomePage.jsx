@@ -121,6 +121,7 @@ const HomePage = () => {
     ],
   };
 
+
   return (
     <>
       <Navbar />

@@ -1,11 +1,13 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 import { api, apiWithAuth } from "./api";
+// eslint-disable-next-line no-unused-vars
 
 const login = async (email, password) => {
   const res = await api.post(`/auth/member/login`, {
     email: email,
     password: password,
   });
+  // const token = res.data.data;
   return localStorage.setItem("...", res.data.data.token);
 };
 

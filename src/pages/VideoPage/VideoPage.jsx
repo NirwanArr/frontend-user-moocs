@@ -12,15 +12,13 @@ import { useEffect, useState } from "react";
 // import { getCourseById, updateCourseStatus } from "../../api/fetching";
 import { getCourseById } from "../../api/fetching";
 
-
-
 const VideoPage = () => {
   const { userId, courseId } = useParams();
   const [isOpen, setIsOpen] = useState(false);
   const [course, setCourse] = useState();
   const [videoLink, setVideoLink] = useState();
   const [contentStatus, setContentStatus] = useState(0);
-  const [clickedContentIndex, setClickedContentIndex] = useState(null);
+  const [clickedContentIndex, setClickedContentIndex] = useState(0);
   const [isLoading, setIsloading] = useState(false);
   useEffect(() => {
     const fetchData = async () => {
@@ -32,8 +30,6 @@ const VideoPage = () => {
         // let ContentStatus
 
         console.log(resData);
-
-
 
         // resData.chapters.forEach((chapter) => {
         //   chapter.contents.forEach((content) => {
@@ -50,8 +46,7 @@ const VideoPage = () => {
         const firstChapter = resData.chapters && resData.chapters[0];
         const firstContent = firstChapter && firstChapter.contents[0];
         const firstVideoLink = firstContent && firstContent.contentUrl;
-        setClickedContentIndex(0);
-
+        // // setClickedContentIndex(0);
 
         setVideoLink(firstVideoLink);
         setCourse(resData);
@@ -61,9 +56,7 @@ const VideoPage = () => {
       }
     };
     fetchData();
-
-
-  }, [userId, courseId, isLoading]);
+  }, [userId, courseId]);
 
   const handleSetVideoLink = (link) => {
     setVideoLink(link);
@@ -91,7 +84,7 @@ const VideoPage = () => {
         >
           <span className="mr-2">
             {isOpen ? <IoMdCloseCircleOutline /> : <CiBoxList />}
-          </span>{" "}
+          </span>
           {isOpen ? "Close" : "List Course"}
         </button>
       </div>
@@ -104,7 +97,7 @@ const VideoPage = () => {
             <h1 className="flex items-center text-sm font-semibold transition-all duration-300 md:text-base hover:underline hover:scale-105">
               <span className="block mr-1 md:mr-2">
                 <ArrowLeft className="w-4 h-4" />
-              </span>{" "}
+              </span>
               Kelas Lainnya
             </h1>
           </Link>
@@ -122,6 +115,7 @@ const VideoPage = () => {
               <ProgressCourse
                 isOpen={isOpen}
                 chapters={course}
+                setClickedContentIndex={setClickedContentIndex}
                 handleVideoLink={handleSetVideoLink}
                 contentStatus={contentStatus}
                 onVideoClick={clickedContentIndex}

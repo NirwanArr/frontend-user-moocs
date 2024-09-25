@@ -8,6 +8,8 @@ const Main = ({ courseData, videoLink }) => {
   if (!courseData) {
     return null; // Atau tindakan yang sesuai jika item tidak ada
   }
+
+  console.log(courseData)
   return (
     <div>
       <div className="flex flex-col">

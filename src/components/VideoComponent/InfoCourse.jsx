@@ -28,27 +28,24 @@ const InfoCourse = ({ item }) => {
         </p>
       </div>
       <div>
-        {/* <h3 className="text-sm font-semibold md:text-base -tracking-wide ">
-          {item.aboutCourse}
-        </h3> */}
         <div className="w-full mt-3 md:w-11/12 lg:w-10/12">
           <div className="flex justify-between w-full">
             <p className="flex items-center text-xs font-semibold text-color-primary md:text-sm">
               <span className="mr-1 text-green-500">
                 <PiShieldStarBold size={24} />
-              </span>{" "}
+              </span>
               {item.courseLevel}
             </p>
             <p className="flex items-center text-xs font-semibold text-color-primary md:text-sm">
               <span className="mr-1 text-green-500">
                 <RiBook3Line size={24} />
-              </span>{" "}
+              </span>
               {item.modulePerCourse} Modul
             </p>
             <p className="flex items-center text-xs font-semibold text-color-primary md:text-sm">
               <span className="mr-1 text-green-500">
                 <FaClock size={24} />
-              </span>{" "}
+              </span>
               {item.durationPerCourseInMinutes} Menit
             </p>
           </div>

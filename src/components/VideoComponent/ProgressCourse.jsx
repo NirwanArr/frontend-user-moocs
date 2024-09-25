@@ -4,7 +4,7 @@ import ProgressBar from "../MyCourseComponent/ProgressBar";
 import ChapterItem from "./ChapterItem";
 import { cn } from "../../libs/utils";
 import PropTypes from "prop-types";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Popup from "reactjs-popup";
 import "reactjs-popup/dist/index.css";
 import { useNavigate, useParams } from "react-router-dom";
@@ -41,6 +41,7 @@ const ProgressCourse = ({
   contentStatus,
   onVideoClick,
   setIsloading,
+  setClickedContentIndex,
 }) => {
   if (!chapters) {
     return null; // Atau tindakan yang sesuai jika item tidak ada
@@ -102,15 +103,27 @@ const ProgressCourse = ({
     }
   };
 
+  useEffect(() => {
+    console.log(chapters?.courseUserId);
+    if (chapters?.courseUserId) {
+      window.location.href = `/video/list/${chapters?.courseUserId}`;
+    }
+    // /video/list/6
+  }, [chapters]);
+
   return (
     <>
       <div
         className={cn(
           "absolute -top-[100vh] space-y-3 left-0 right-0 rounded-b-lg md:rounded-none lg:sticky lg:top-24 duration-500 transition-all",
-          isOpen && "top-0 md:-top-4"
+          isOpen && "top-[80px] md:top-6"
         )}
       >
-        {chapters.courseStatus !== "inProgress" ? (
+        {chapters.courseStatus === "Selesai" ? (
+          <div className="p-4  bg-green-300 font-bold">
+            Kelas sudah selesai
+          </div>
+        ) : chapters.courseStatus !== "inProgress" ? (
           chapters.courseType !== "Free" ? (
             <div>
               <Popup
@@ -122,11 +135,8 @@ const ProgressCourse = ({
                 // onOpen={onPembayaran}
                 trigger={
                   <button className="w-full rounded text-xs lg:text-sm py-3 bg-[#0092A4] text-white font-semibold flex justify-center items-center hover:bg-[#0092A4] hover:bg-opacity-50">
-                    Beli Kelas
+                    Kelas Premium, Mulai berlangganan !
                   </button>
-
-
-
                 }
                 modal
               >
@@ -135,26 +145,7 @@ const ProgressCourse = ({
                   onHistoryTransaksi={onHistoryTransaksi}
                   setInsopen={setInsopen}
                 ></ModalPembayaran>
-                {/* {message ? (
-                  message ===
-                  "Anda memiliki transaksi yang belum dibayar untuk kursus ini, silahkan cek riwayat transaksi" ? (
-                    <div className="text-center text-red-400 space-y-2">
-                      <div>{message}</div>
-                      <button
-                        onClick={onHistoryTransaksi}
-                        className=" text-white shadow px-4 py-1 rounded bg-blue-400"
-                      >
-                        History Transaksi
-                      </button>
-                    </div>
-                  ) : (
-                    <div className="text-center text-red-400">{message}</div>
-                  )
-                ) : !isLoading ? (
-                  <ModalPembayaran></ModalPembayaran>
-                ) : (
-                  <div className="text-center">LOADING..</div>
-                )} */}
+
               </Popup>
             </div>
           ) : (
@@ -162,64 +153,113 @@ const ProgressCourse = ({
               onClick={onCreateCourse}
               className="w-full rounded text-xs lg:text-sm py-3 bg-[#0092A4] text-white font-semibold flex justify-center items-center hover:bg-[#0092A4] hover:bg-opacity-50"
             >
-              Tambah Kelas
+              Kelas ini gratis, ayo lanjut berlajar !
             </button>
-
           )
         ) : (
           ""
         )}
-
         <div className="bg-white rounded-lg shadow-2xl lg:shadow-lg flex flex-col px-2 py-4 h-[75vh] overflow-auto">
           <div className="grid grid-cols-2 md:gap-x-2">
             <h1 className="ml-2 text-sm font-semibold md:text-base">
-              Materi Belajar
+              {chapters.courseStatus === "inProgress" ||
+                chapters.courseStatus === "Selesai" ? "Materi Belajar" : ""}
+
             </h1>
+
             <div className="">
-              {chapters.courseStatus === "inProgress" && (
-                <ProgressBar contentStatus={contentStatus} />
-              )}
+              {chapters.courseStatus !== "Selesai" &&
+                chapters.courseStatus === "inProgress" && (
+                  <ProgressBar contentStatus={contentStatus} />
+                )}
             </div>
           </div>
-          {/* loop judul chapter  */}
-          {/* Contohnya Chapter 1 - Pendahuluan */}
 
-          {chapter.map((item, i) => (
-            <div key={i} className="mx-2 my-1">
-              <div className="flex justify-between mt-3 text-xs font-semibold lg:text-sm">
-                <h1 className="font-bold text-color-primary">
-                  Chapter {i + 1} - {item.chapterTitle}
-                </h1>
-                {/* <p className="mr-2 text-blue-400">60 Menit</p> */}
-              </div>
-              {/* loop untuk mengambil list data dari setiap chapter */}
-              {/* #6148FF */}
-              {item.contents.map((content, x) => (
-                <div
-                  key={x}
-                  className={cn(
-                    "duration-300 cursor-pointer",
-                    isActive.title === i &&
-                    isActive.chapter === x &&
-                    "scale-105 bg-primary text-white"
-                  )}
-                  onClick={() => {
-                    setIsActive({ title: i, chapter: x });
-                    handleVideoLink(content.contentUrl);
-                    setIsloading((a) => !a);
-                  }}
-                >
-                  <ChapterItem
-                    contentData={content}
-                    index={x}
-                    isActive={isActive.title === i && isActive.chapter === x}
-                    onVideoClick={onVideoClick}
-                  // handleContentStatus={() => handleContentStatus()}
-                  />
+          {chapters.courseStatus === "inProgress" ||
+            chapters.courseStatus === "Selesai"
+            ? chapter.map((item, i) => (
+              <div key={i} className="mx-2 my-1">
+                <div className="flex justify-between mt-3 text-xs font-semibold lg:text-sm">
+                  <h1 className="font-bold text-color-primary">
+                    Chapter {i + 1} - {item.chapterTitle}
+                  </h1>
+                  {/* <p className="mr-2 text-blue-400">60 Menit</p> */}
                 </div>
-              ))}
-            </div>
-          ))}
+                {/* loop untuk mengambil list data dari setiap chapter */}
+                {/* #6148FF */}
+                {item.contents.map((content, x) => (
+                  <div
+                    key={x}
+                    className={cn(
+                      "duration-300 cursor-pointer",
+                      isActive.title === i &&
+                      isActive.chapter === x &&
+                      "scale-105 bg-primary text-white"
+                    )}
+                    onClick={() => {
+                      console.log(content, "");
+                      setIsActive({ title: i, chapter: x });
+                      handleVideoLink(content.contentUrl);
+                      setIsloading((a) => !a);
+                      // setClickedContentIndex(x);
+                    }}
+                  >
+                    <ChapterItem
+                      contentData={content}
+                      index={x}
+                      isActive={
+                        isActive.title === i && isActive.chapter === x
+                      }
+                      onVideoClick={onVideoClick}
+                    // handleContentStatus={() => handleContentStatus()}
+                    />
+                  </div>
+                ))}
+              </div>
+            ))
+            : (
+              <div className="relative">
+                {/* Content List */}
+                {chapter.map((item, i) => (
+                  <div key={i} className="mx-2 my-1 opacity-50">
+                    {/* Konten Setiap Chapter */}
+                    <div className="flex justify-between mt-3 text-xs font-semibold lg:text-sm">
+                      <h1 className="font-bold text-color-primary">
+                        Chapter {i + 1} - {item.chapterTitle}
+                      </h1>
+                    </div>
+                    {item.contents.map((content, x) => (
+                      <div
+                        key={x}
+                        className={cn(
+                          "duration-300",
+                          isActive.title === i &&
+                          isActive.chapter === x &&
+                          "scale-105 bg-primary text-white"
+                        )}
+                      >
+                        <ChapterItem
+                          contentData={content}
+                          index={x}
+                          isActive={isActive.title === i && isActive.chapter === x}
+                          onVideoClick={onVideoClick}
+                        />
+                      </div>
+                    ))}
+                  </div>
+                ))}
+
+                {/* Content Overlay di Tengah Chapter Map */}
+                <div className="absolute inset-0 flex items-center justify-center z-10">
+                  {/* <div className="bg-black bg-opacity-70 text-white px-4 py-2 rounded-lg text-center">
+                    {chapters.courseType !== "Free"
+                      ? "Harus berlangganan untuk mengakses konten ini"
+                      : ""}
+                  </div> */}
+                </div>
+              </div>
+            )
+          }
         </div>
       </div>
 
@@ -227,13 +267,18 @@ const ProgressCourse = ({
         open={drawerOpen}
         onClose={onCloseDrawer}
         direction="left"
-        className="overflow-auto min-w-[600px]"
+        className="overflow-auto max-w-[600px] !w-full"
         lockBackgroundScroll
         enableOverlay={true}
       >
-        <h1 className="bg-[#0092A4] p-4 sticky top-0 shadow z-50 font-bold text-white">
-          Riwayat Pembayaran
-        </h1>
+        <div className="flex justify-between">
+          <h1 className="bg-[#0092A4] flex-1 p-4 sticky top-0 shadow z-50 font-bold text-white">
+            Riwayat Pembayaran
+          </h1>
+          <button onClick={onCloseDrawer} className="p-4 bg-red-500 text-white">
+            CLOSE
+          </button>
+        </div>
         {DataHistoryTransaksi && (
           <HistoryPembayaran data={DataHistoryTransaksi}></HistoryPembayaran>
         )}
@@ -258,10 +303,8 @@ const ModalPembayaran = ({ data, onHistoryTransaksi, setInsopen }) => {
         confirmButtonText: "OK",
         didClose: () => {
           window.location.href = data.createdTransactionData.linkPayment;
-        }
+        },
       });
-
-
     } catch (error) {
       setInsopen(true);
       Swal.fire({
@@ -291,35 +334,33 @@ const ModalPembayaran = ({ data, onHistoryTransaksi, setInsopen }) => {
   };
 
   return (
-    <div className="p-2 w-full h-full space-y-2 rounded-full">
+    <div className="p-2 w-full max-w-lg mx-auto h-full space-y-4 rounded-lg">
       <div className="shadow bg-white relative">
-        <div className="overflow-hidden ">
-          <img className="object-cover w-full" src={data.image}></img>
+        <div className="overflow-hidden rounded-t-lg">
+          <img className="object-cover w-full h-48 md:h-64" src={data.image} alt={data.courseName} />
         </div>
-        <div className="p-4 absolute bottom-0 bg-white w-full border-t border-t-slate-300">
-          <div className="text-sm font-bold text-[#0092A4]">
+        <div className="p-4 absolute bottom-0 bg-white w-full border-t border-t-slate-300 rounded-b-lg">
+          <div className="text-sm md:text-base font-bold text-[#0092A4]">
             {data.courseName}
           </div>
-          <div className="text-xs font-bold">{data.intendedFor}</div>
-          <div className="text-xs">by {data.courseBy}</div>
+          <div className="text-xs md:text-sm font-bold">{data.intendedFor}</div>
+          <div className="text-xs md:text-sm">by {data.courseBy}</div>
         </div>
       </div>
-      <div className="border-b py-1">
-        <span className=" font-bold mt-10">Ringkasan Pembayaran</span>
-        <div className="flex justify-between">
+      <div className="border-b py-2">
+        <span className="font-bold mt-10 text-sm md:text-base">Ringkasan Pembayaran</span>
+        <div className="flex justify-between text-sm md:text-base">
           <span>Harga</span>
-          <span className="font-bold">
-            {convertToRupiah(data.coursePrice)}
-          </span>
+          <span className="font-bold">{convertToRupiah(data.coursePrice)}</span>
         </div>
-        <div className="flex justify-between">
+        <div className="flex justify-between text-sm md:text-base">
           <span>PPN 11%</span>
           <span className="font-bold">
             {convertToRupiah(coursePecentageTotal().ppn)}
           </span>
         </div>
       </div>
-      <div className="flex justify-between py-2">
+      <div className="flex justify-between py-2 text-sm md:text-base">
         <span>Total Harga</span>
         <span className="font-bold">
           {convertToRupiah(coursePecentageTotal().total)}
@@ -327,12 +368,13 @@ const ModalPembayaran = ({ data, onHistoryTransaksi, setInsopen }) => {
       </div>
       <button
         onClick={onPembayaran}
-        className="p-3 text-center bg-[#0092A4] text-white font-bold rounded cursor-pointer w-full"
+        className="p-3 text-center bg-[#0092A4] text-white font-bold rounded cursor-pointer w-full hover:bg-opacity-90"
       >
         BAYAR
       </button>
     </div>
   );
+
 };
 
 const HistoryPembayaran = ({ data }) => {
@@ -405,13 +447,14 @@ const HistoryPembayaran = ({ data }) => {
               {isUnpaid ? "Belum Bayar" : "Sudah Bayar"}
             </button>
           </a>
-          <a className="font-bold text-[#0092A4]">{convertToRupiah(a.totalPrice)}</a>
+          <a className="font-bold text-[#0092A4]">
+            {convertToRupiah(a.totalPrice)}
+          </a>
         </div>
       </div>
     );
   });
 };
-
 
 ProgressCourse.propTypes = {
   isOpen: PropTypes.bool,
