@@ -103,13 +103,13 @@ const ProgressCourse = ({
     }
   };
 
-  useEffect(() => {
-    console.log(chapters?.courseUserId);
-    if (chapters?.courseUserId) {
-      window.location.href = `/video/list/${chapters?.courseUserId}`;
-    }
-    // /video/list/6
-  }, [chapters]);
+  // useEffect(() => {
+  //   console.log(chapters?.courseUserId);
+  //   if (chapters?.courseUserId) {
+  //     window.location.href = `/video/list/${chapters?.courseUserId}`;
+  //   }
+  //   // /video/list/6
+  // }, [chapters]);
 
   return (
     <>
