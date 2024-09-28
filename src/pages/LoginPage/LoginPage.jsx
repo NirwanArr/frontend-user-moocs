@@ -4,6 +4,7 @@ import { FiEye, FiEyeOff } from "react-icons/fi";
 import { login } from "../../api/fetching";
 import { getEmail } from "../../api/fetching";
 import axios from "axios";
+import Swal from "sweetalert2"; // Import SweetAlert2
 import background from "../../assets/Analytics.png";
 import { getToken } from "../../api/payload";
 
@@ -12,15 +13,13 @@ const LoginPage = () => {
   const [email, setEmail] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [password, setPassword] = useState("");
-  // eslint-disable-next-line no-unused-vars
   const [isLoading, setIsLoading] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
-
-  
 
   const togglePasswordVisibility = () => {
     setShowPassword((prevShowPassword) => !prevShowPassword);
   };
+
   const handlePassword = async () => {
     if (!email) {
       setAlertMessage("Please enter your email");
@@ -40,10 +39,10 @@ const LoginPage = () => {
 
   useEffect(() => {
     if (getToken()) {
-      console.log(getToken())
-      window.location.href = "/"
+      console.log(getToken());
+      window.location.href = "/";
     }
-  })
+  }, []);
 
   const handleLogin = async () => {
     if (!email || !password) {
@@ -52,10 +51,22 @@ const LoginPage = () => {
     }
     try {
       await login(email, password);
-      window.location.href = "/"
+      Swal.fire({
+        title: "Login Berhasil",
+        text: "Anda berhasil masuk.",
+        icon: "success",
+        confirmButtonText: "OK",
+      }).then(() => {
+        window.location.href = "/";
+      });
     } catch (err) {
       if (axios.isAxiosError(err)) {
-        setAlertMessage(err.response.data.message);
+        Swal.fire({
+          title: "Login Gagal",
+          text: err.response.data.message || "Kata sandi salah.",
+          icon: "error",
+          confirmButtonText: "OK",
+        });
         return;
       }
       setAlertMessage(err.message);
@@ -150,9 +161,6 @@ const LoginPage = () => {
               alt=""
               className="w-[400px] h-full hidden rounded-r-2xl md:block object-cover"
             />
-            {/* <div className="absolute hidden p-6 rounded bottom-10 right-6 bg-blue-950 bg-opacity-30 backdrop-blur-sm drop-shadow-lg md:block">
-              <span className="text-xl text-black">ayo beli course ini</span>
-            </div> */}
           </div>
         </div>
       </div>

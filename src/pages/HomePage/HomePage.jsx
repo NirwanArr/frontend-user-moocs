@@ -7,10 +7,9 @@ import CardCourse from "../../components/HomeComponent/CardCourse";
 import Navbar from "../../components/NavbarComponent/Navbar";
 import { getCategory, getCourse } from "../../api/fetching";
 import { decodeToken } from "../../api/payload";
-import backgroundHomePage from "../../assets/homepage-bg.png";
+import backgroundHomePage from "../../assets/bg-homepage.jpeg";
 
 const HomePage = () => {
-  // const [item, setItems] = useState(Data);
   const [categories, setCategories] = useState([]);
   const [courses, setCourses] = useState([]);
   const [isLoggedIn, setLoggedIn] = useState(!!localStorage.getItem("..."));
@@ -47,10 +46,12 @@ const HomePage = () => {
     };
     fetchData();
   }, []);
+
   const menuItems = [...new Set(categories.map((val) => val.categoryName))];
   const handleCategorySelect = (category) => {
     setSelectedCategory(category);
   };
+
   var settingsCategory = {
     dots: true,
     infinite: true,
@@ -60,6 +61,7 @@ const HomePage = () => {
     swipeToSlide: true,
     pauseOnHover: true,
     speed: 800,
+    slidesToShow: 1, // Default to 1 slide for all breakpoints
     responsive: [
       {
         breakpoint: 640, // sm
@@ -70,13 +72,13 @@ const HomePage = () => {
       {
         breakpoint: 768, // md
         settings: {
-          slidesToShow: 3,
+          slidesToShow: 2,
         },
       },
       {
         breakpoint: 1024, // lg
         settings: {
-          slidesToShow: 4,
+          slidesToShow: 3,
         },
       },
       {
@@ -93,23 +95,24 @@ const HomePage = () => {
     slidesToScroll: 1,
     swipeToSlide: true,
     autoplay: false,
+    slidesToShow: 1, // Default to 1 slide for all breakpoints
     responsive: [
       {
         breakpoint: 640, // sm
         settings: {
-          slidesToShow: 3,
+          slidesToShow: 2,
         },
       },
       {
         breakpoint: 768, // md
         settings: {
-          slidesToShow: 4,
+          slidesToShow: 3,
         },
       },
       {
         breakpoint: 1024, // lg
         settings: {
-          slidesToShow: 6,
+          slidesToShow: 4,
         },
       },
       {
@@ -121,18 +124,17 @@ const HomePage = () => {
     ],
   };
 
-
   return (
     <>
       <Navbar />
       {/* main section */}
-      <div className="w-full pt-[74px] relative h-64">
+      <div className="w-full h-[75vh] pt-[74px] relative overflow-hidden">
         <img
           src={backgroundHomePage}
           alt="picture"
           className="absolute object-cover w-full h-full mix-blend-overlay"
         />
-        <div className="flex flex-col h-64 pt-16 pl-10 bg-gradient-to-r from-[#0092A8] lg:items-end lg:pr-40 lg:bg-gradient-to-l">
+        <div className="flex flex-col h-full pt-16 pl-10 bg-gradient-to-r from-[#0092A8] lg:items-end lg:pr-40 lg:bg-gradient-to-l">
           <h1 className="text-xl font-semibold text-white">
             Belajar dari <br /> Praktisi Terbaik!
           </h1>
@@ -150,9 +152,9 @@ const HomePage = () => {
       </div>
 
       {/* Kategori Belajar */}
-      <div className="w-full bg-layer lg:h-[350px]">
-        <div className="max-w-screen-lg mx-auto">
-          <div className="mt-[74px] h-96">
+      <div className="w-full h-[450px] bg-layer overflow-hidden">
+        <div className="max-w-screen-lg mx-auto h-full">
+          <div className="mt-[74px] h-full">
             <h1 className="px-6 pt-4 pb-1 text-xl font-bold text-black md:text-2xl lg:pb-2">
               Kategori Belajar
             </h1>
@@ -168,7 +170,7 @@ const HomePage = () => {
       </div>
 
       {/* Kursus Populer */}
-      <div className="max-w-screen-lg px-6 mx-auto mt-20 md:mt-0 lg:p-0">
+      <div className="max-w-screen-lg px-6 mx-auto mt-20 md:mt-0 lg:p-0 overflow-x-hidden">
         {/* title */}
         <div className="flex items-center justify-between">
           <div className="flex items-center justify-between">

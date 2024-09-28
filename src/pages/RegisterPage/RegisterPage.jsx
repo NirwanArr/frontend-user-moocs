@@ -1,9 +1,10 @@
 /* eslint-disable no-unused-vars */
 import { Link, useNavigate } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { FiEye, FiEyeOff } from "react-icons/fi";
 import { register } from "../../api/fetching";
 import axios from "axios";
+import Swal from "sweetalert2"; // Import SweetAlert2
 import imageRegistration from "../../assets/background-regist.png";
 
 const RegisterPage = () => {
@@ -14,6 +15,7 @@ const RegisterPage = () => {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [alertMessage, setAlertMessage] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [agreeTerms, setAgreeTerms] = useState(false); // State untuk checkbox
 
   const togglePasswordVisibility = () => {
     setShowPassword((prevShowPassword) => !prevShowPassword);
@@ -27,16 +29,44 @@ const RegisterPage = () => {
 
   const handleRegister = async () => {
     if (!name || !email || !phoneNumber || !password) {
-      setAlertMessage("Mohon lengkapi semua kolom.");
+      Swal.fire({
+        title: "Pendaftaran Gagal",
+        text: "Mohon lengkapi semua kolom.",
+        icon: "error",
+        confirmButtonText: "OK",
+      });
       setTimeOutMessage(1000);
       return;
     }
+
+    if (!agreeTerms) {
+      Swal.fire({
+        title: "Pendaftaran Gagal",
+        text: "Anda harus menyetujui syarat dan ketentuan.",
+        icon: "error",
+        confirmButtonText: "OK",
+      });
+      return;
+    }
+
     try {
       const res = await register(name, email, phoneNumber, password);
-      navigate(`/otp/${res.id}`);
+      Swal.fire({
+        title: "Pendaftaran Berhasil",
+        text: "Pendaftaran berhasil. Anda akan diarahkan untuk verifikasi OTP.",
+        icon: "success",
+        confirmButtonText: "OK",
+      }).then(() => {
+        navigate(`/otp/${res.id}`);
+      });
     } catch (err) {
       if (axios.isAxiosError(err)) {
-        setAlertMessage(err.res.data.message);
+        Swal.fire({
+          title: "Pendaftaran Gagal",
+          text: err.response.data.message || "Terjadi kesalahan. Silakan coba lagi.",
+          icon: "error",
+          confirmButtonText: "OK",
+        });
         setTimeOutMessage(2000);
         return;
       }
@@ -122,8 +152,10 @@ const RegisterPage = () => {
                     name="remember"
                     id="ch"
                     className="mr-2"
+                    checked={agreeTerms}
+                    onChange={() => setAgreeTerms(!agreeTerms)}
                   />
-                  i agree all &nbsp;
+                  I agree to all &nbsp;
                   <p className="font-semibold text-blue-900">
                     terms and conditions
                   </p>
@@ -142,7 +174,7 @@ const RegisterPage = () => {
             </p>
 
             <p className="mt-2 text-sm text-center text-gray-400">
-              Already have account ? &nbsp;
+              Already have an account? &nbsp;
               <Link
                 to={"/login"}
                 className="font-semibold text-red-500 underline"

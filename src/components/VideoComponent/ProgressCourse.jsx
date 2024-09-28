@@ -44,7 +44,7 @@ const ProgressCourse = ({
   setClickedContentIndex,
 }) => {
   if (!chapters) {
-    return null; // Atau tindakan yang sesuai jika item tidak ada
+    return null;
   }
   if (typeof handleVideoLink !== "function") {
     console.error("handleVideoLink is not a function");
@@ -103,13 +103,13 @@ const ProgressCourse = ({
     }
   };
 
-  // useEffect(() => {
-  //   console.log(chapters?.courseUserId);
-  //   if (chapters?.courseUserId) {
-  //     window.location.href = `/video/list/${chapters?.courseUserId}`;
-  //   }
-  //   // /video/list/6
-  // }, [chapters]);
+  useEffect(() => {
+    console.log(chapters?.courseUserId);
+    if (chapters?.courseUserId) {
+      window.location.href = `/video/list/${chapters?.courseUserId}`;
+    }
+    // /video/list/6
+  }, [chapters]);
 
   return (
     <>

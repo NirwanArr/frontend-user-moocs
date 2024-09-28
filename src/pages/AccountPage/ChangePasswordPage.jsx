@@ -6,6 +6,7 @@ import MenuList from "../../components/AccountComponent/MenuList";
 import Navbar from "../../components/NavbarComponent/Navbar";
 import { FiEye, FiEyeOff } from "react-icons/fi";
 import { useParams } from "react-router-dom";
+import Swal from "sweetalert2"; // Import SweetAlert2
 import { newPasswordUser } from "../../api/fetching";
 import axios from "axios";
 
@@ -40,17 +41,35 @@ const UserPage = () => {
         confirmPassword,
         userId
       );
+      Swal.fire({
+        title: "Password Berhasil Diubah",
+        text: "Password Anda telah berhasil diubah.",
+        icon: "success",
+        confirmButtonText: "OK",
+      });
       setAlertMessage({ type: "success", message: res });
     } catch (err) {
       if (axios.isAxiosError(err)) {
+        Swal.fire({
+          title: "Gagal Mengubah Password",
+          text: err.response.data.message || "Terjadi kesalahan saat mengubah password.",
+          icon: "error",
+          confirmButtonText: "OK",
+        });
         setAlertMessage({ type: "error", message: err.response.data.message });
       } else {
+        Swal.fire({
+          title: "Gagal Mengubah Password",
+          text: err.message,
+          icon: "error",
+          confirmButtonText: "OK",
+        });
         setAlertMessage({ type: "error", message: err.message });
       }
     }
   };
 
-  // fungsi buka tutup hamburger menu
+  // Fungsi buka tutup hamburger menu
   const handleHamburgerClick = () => {
     setOpenHamburger(!openHamburger);
   };
@@ -91,8 +110,8 @@ const UserPage = () => {
                 {alertMessage && (
                   <div
                     className={`flex justify-center items-center mx-auto text-xs  font-montserrat ${alertMessage.type === "success"
-                        ? "text-[#73CA5C]"
-                        : "text-[#FF4949]"
+                      ? "text-[#73CA5C]"
+                      : "text-[#FF4949]"
                       }`}
                   >
                     <span className="block">{alertMessage.message}</span>

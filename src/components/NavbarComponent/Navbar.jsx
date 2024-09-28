@@ -47,11 +47,11 @@ const Navbar = () => {
   };
 
   useEffect(() => {
-    const key = localStorage.getItem("key")
+    const key = localStorage.getItem("key");
     if (key) {
-      setActive(key)
+      setActive(key);
     }
-  })
+  });
   window.addEventListener("scroll", changeBackground);
 
   const handleSearchClick = () => {
@@ -92,20 +92,20 @@ const Navbar = () => {
   return (
     <>
       <nav
-        className={`w-full fixed z-20 bg-[#0092A8] ${navbar ? "bg-opacity-60 backdrop-blur-sm shadow-black shadow-sm duration-500" : "bg-opacity-100"
+        className={`w-full fixed z-20 bg-[#0092A8] ${navbar ? "bg-opacity-60 backdrop-blur-sm shadow-lg shadow-black/30 duration-500" : "bg-opacity-100 shadow-md shadow-black/10"
           }`}
       >
         <div className="flex items-center justify-between px-2 py-4 lg:pt-6 lg:px-10">
           <div>
             <Link to={"/"} repl
-            ace>
+              ace>
               <img src={logo} alt="logo" className="w-10 h-10" />
             </Link>
           </div>
 
           <div className="md:flex md:flex-row-reverse md:gap-8 md:items-center">
             <div className="relative flex gap-4 lg:hidden">
-              <div className="md:hidden">
+              {/* <div className="md:hidden">
                 <BiSearchAlt
                   className="w-10 h-10 py-1 text-white bg-[#0092A8] border cursor-pointer rounded-xl hover:bg-white hover:text-[#0092A8] hover:duration-100 "
                   onClick={handleSearchClick}
@@ -123,7 +123,7 @@ const Navbar = () => {
                     <BiSearchAlt className="w-8 h-8 py-1 text-[#0092A8] cursor-pointer rounded-2xl hover:bg-[#0092A8] hover:text-white" />
                   </div>
                 </div>
-              </div>
+              </div> */}
 
               <div className="relative">
                 <button
@@ -206,7 +206,7 @@ const Navbar = () => {
               </div>
             </div>
 
-            <div className="hidden md:block lg:block">
+            {/* <div className="hidden md:block lg:block">
               <form action="search" className="flex font-poppins">
                 <input
                   className="border-none py-3 px-4 rounded-s-2xl bg-white text-sm lg:text-base lg:w-[500px]"
@@ -221,7 +221,7 @@ const Navbar = () => {
                   <BiSearchAlt className="w-10 h-10 py-1 text-white bg-[#0092A8] border cursor-pointer rounded-xl hover:shadow-md hover:bg-[#007a8e] " />
                 </button>
               </form>
-            </div>
+            </div> */}
           </div>
 
           <div className="items-center hidden lg:flex">
@@ -251,8 +251,8 @@ const Navbar = () => {
                       to={menu.link}
                       className="flex flex-col items-center"
                       onClick={() => {
-                        setActive(i)
-                        localStorage.setItem("key", i)
+                        setActive(i);
+                        localStorage.setItem("key", i);
                       }}
                     >
                       <span

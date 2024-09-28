@@ -56,7 +56,7 @@ const newPasswordUser = async (
 ) => {
   const res = await apiWithAuth.patch(`/user/change-password/${userId}`, {
     oldPassword: oldPassword,
-    newUserPassword: newPassword,
+    newPassword: newPassword,
     confirmPassword: confirmPassword,
   });
   return res.data.message;
@@ -77,20 +77,57 @@ const createCourse = async (courseId) => {
   return res.data.message;
 };
 
+// const getCourse = async (filter) => {
+//   let category, level, query;
+//   if (filter?.selecCategory) {
+//     category = filter.selecCategory;
+//   }
+//   if (filter?.selectLevel) {
+//     level = filter.selectLevel;
+//   }
+
+//   if (filter) {
+//     query = `?category=[${category || ""}]&level=${level || ""}`;
+//   }
+
+//   const res = await api.get(`/course${query || ""}`);
+//   return res.data.data;
+// };
+
 const getCourse = async (filter) => {
-  let category, level, query;
-  if (filter?.selecCategory) {
-    category = filter.selecCategory;
+  let query = "";
+
+  if (filter?.searchTerm) {
+    query += `search=${encodeURIComponent(filter.searchTerm)}&`;
   }
+
+  if (filter?.selecCategory && filter.selecCategory.length > 0) {
+    query += `category=${encodeURIComponent(JSON.stringify(filter.selecCategory))}&`;
+  }
+
   if (filter?.selectLevel) {
-    level = filter.selectLevel;
+    query += `level=${encodeURIComponent(filter.selectLevel)}&`;
   }
 
-  if (filter) {
-    query = `?category=[${category || ""}]&level=${level || ""}`;
+  if (filter?.courseType) {
+    query += `type=${encodeURIComponent(filter.courseType)}&`;
   }
 
-  const res = await api.get(`/course${query || ""}`);
+  if (filter?.sortBy) {
+    query += `sort_by=${encodeURIComponent(filter.sortBy)}&`;
+  }
+
+  if (filter?.orderBy) {
+    query += `order_by=${encodeURIComponent(filter.orderBy)}&`;
+  }
+
+  // Hapus karakter "&" terakhir dari query string jika ada
+  if (query.endsWith("&")) {
+    query = query.slice(0, -1);
+  }
+
+  const res = await api.get(`/course${query ? `?${query}` : ""}`);
+
   return res.data.data;
 };
 
@@ -165,6 +202,11 @@ const historyTransaksi = async () => {
   return res.data;
 };
 
+const getNotificationsByUserId = async () => {
+  const res = await apiWithAuth.get(`/notification/getNotifByUserId`);
+  return res.data.data;
+};
+
 export {
   login,
   register,
@@ -185,4 +227,5 @@ export {
   getCourseByIdFree,
   getPembayaran,
   historyTransaksi,
+  getNotificationsByUserId
 };

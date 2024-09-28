@@ -9,19 +9,17 @@ import { useParams } from "react-router-dom";
 import { MdOutlineCameraAlt } from "react-icons/md";
 import MenuList from "../../components/AccountComponent/MenuList";
 import axios from "axios";
+import Swal from "sweetalert2"; // Import SweetAlert2
 import { getMe, updateMe } from "../../api/fetching";
 
 const UserPage = () => {
   const { userId } = useParams();
   const [openHamburger, setOpenHamburger] = useState(false);
-  // const [picture, setPicture] = useState(null);
   const [name, setName] = useState();
   const [image, setImage] = useState();
   const [phoneNumber, setPhoneNumber] = useState();
   const [country, setCountry] = useState();
   const [city, setCity] = useState();
-  // eslint-disable-next-line no-unused-vars
-  const [alertMessage, setAlertMessage] = useState("");
   const img = useRef();
 
   const handleHamburgerClick = () => {
@@ -41,13 +39,13 @@ const UserPage = () => {
         setCountry(resGetMe.country);
         setCity(resGetMe.city);
       } catch (err) {
-        throw new Error(err.meplitesage);
+        throw new Error(err.message);
       }
     };
     fetchData();
   }, []);
 
-  // fungsi update profile
+  // Fungsi untuk update profile
   const handleChange = async () => {
     const token = localStorage.getItem("...");
     try {
@@ -60,13 +58,30 @@ const UserPage = () => {
         userId,
         token
       );
-      setImage(resUpdate.image);
-      window.location.reload(true);
+      Swal.fire({
+        title: "Profil Diperbarui",
+        text: "Profil Anda telah berhasil diperbarui.",
+        icon: "success",
+        confirmButtonText: "OK",
+      }).then(() => {
+        setImage(resUpdate.image);
+        window.location.reload(true);
+      });
     } catch (err) {
       if (axios.isAxiosError(err)) {
-        setAlertMessage({ type: "error", message: err.relitonse.data.message });
+        Swal.fire({
+          title: "Gagal Memperbarui Profil",
+          text: err.response?.data?.message || "Terjadi kesalahan saat memperbarui profil.",
+          icon: "error",
+          confirmButtonText: "OK",
+        });
       } else {
-        setAlertMessage({ type: "error", message: err.message });
+        Swal.fire({
+          title: "Gagal Memperbarui Profil",
+          text: err.message,
+          icon: "error",
+          confirmButtonText: "OK",
+        });
       }
     }
   };

@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import OtpInput from "react-otp-input";
 import { MdVerifiedUser } from "react-icons/md";
 import { FaArrowLeft } from "react-icons/fa6";
+import Swal from "sweetalert2"; // Import SweetAlert2
 import { resendOtp, verifyOtp } from "../../api/fetching";
-import { useParams } from "react-router-dom";
 import axios from "axios";
 
 const OTPPage = () => {
@@ -38,12 +38,24 @@ const OTPPage = () => {
   const handleResendCode = async () => {
     try {
       const res = await resendOtp(email);
+      Swal.fire({
+        title: "Kode OTP Terkirim",
+        text: "Kode OTP baru telah dikirim ke email Anda.",
+        icon: "success",
+        confirmButtonText: "OK",
+      });
       setAlertMessage({ type: "success", res });
     } catch (err) {
       if (axios.isAxiosError(err)) {
+        Swal.fire({
+          title: "Gagal Mengirim OTP",
+          text: err.response.data.message || "Terjadi kesalahan saat mengirim OTP. Silakan coba lagi.",
+          icon: "error",
+          confirmButtonText: "OK",
+        });
         setAlertMessage({
           type: "error",
-          message: err.response.data.res,
+          message: err.response.data.message,
         });
         return;
       }
@@ -53,13 +65,26 @@ const OTPPage = () => {
     // Setelah mengirim ulang, aktifkan timer
     setIsTimerActive(true);
   };
+
   const handleVerify = async () => {
     try {
       const res = await verifyOtp(code, userId);
+      Swal.fire({
+        title: "Verifikasi Berhasil",
+        text: "Akun Anda telah berhasil diverifikasi.",
+        icon: "success",
+        confirmButtonText: "OK",
+      }).then(() => {
+        navigate("/login");
+      });
       setAlertMessage({ type: "success", message: res });
-
-      navigate("/login");
     } catch (err) {
+      Swal.fire({
+        title: "Verifikasi Gagal",
+        text: err.response?.data?.message || "Terjadi kesalahan dalam permintaan.",
+        icon: "error",
+        confirmButtonText: "OK",
+      });
       setAlertMessage({
         type: "error",
         message: "Terjadi kesalahan dalam permintaan.",
@@ -86,7 +111,7 @@ const OTPPage = () => {
           <div className="flex flex-col w-full max-w-md mx-auto space-y-7">
             <div className="flex flex-col items-center justify-center text-center">
               <MdVerifiedUser className="items-center justify-center w-24 h-24 text-[#0092A4]" />
-              <div className="text-2xl font-semibold ">OTP VERIV</div>
+              <div className="text-2xl font-semibold ">OTP VERIFICATION</div>
               <p className="font-poppins text-md">
                 Enter the OTP sent to you verify your identity
               </p>
@@ -106,20 +131,6 @@ const OTPPage = () => {
                     />
                   )}
                 />
-                {/* <OtpInput
-                  value={code}
-                  onChange={setCode}
-                  numInputs={4}
-                  renderSeparator={<span>-</span>}
-                  renderInput={(props) => (
-                    <input
-                      {...props}
-                      className="w-24 mx-2 text-5xl text-center border rounded-md h-14"
-                    />
-                  )}
-                  containerStyle="justify-center"
-                  inputStyle="flex"
-                /> */}
               </div>
               <div className="flex flex-col items-center space-y-5">
                 {alertMessage && (
@@ -141,7 +152,6 @@ const OTPPage = () => {
                 </button>
                 <button
                   className="px-3 py-2 text-sm text-center text-white bg-black border border-none outline-none rounded-xl hover:bg-gray-300"
-                // onClick={handleClearOTP}
                 >
                   Clear OTP
                 </button>
@@ -151,7 +161,7 @@ const OTPPage = () => {
                     <p>Resend OTP in {timer} seconds</p>
                   ) : (
                     <p>
-                      Didnt get code ? &nbsp;
+                      Didn't get code? &nbsp;
                       <button
                         className="font-bold text-blue-950 font-poppins"
                         onClick={handleResendCode}
